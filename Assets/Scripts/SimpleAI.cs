@@ -10,7 +10,7 @@ public class SimpleAI : MonoBehaviour
     public float viewRadius;
     public float viewAngle;
 
-    public LayerMask playerMask;
+    [SerializeField] private LayerMask playerMask;
     public LayerMask obstacleMask;
 
     [Space(5)]
@@ -38,7 +38,7 @@ public class SimpleAI : MonoBehaviour
 
     private void CheckState()
     {
-        FindVisibleTargets();
+        FindPlayer();
 
         switch (currentState)
         {
@@ -91,23 +91,62 @@ public class SimpleAI : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        //if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
     #region Vision
-    void FindVisibleTargets()
-    {
+    // void FindVisibleTargets()
+    // {
 
+    //     playerTarget = null;
+    //     playerSeen = false;
+
+    //     GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+
+    //     if (players.Length == 0)
+    //     {
+    //         return;
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("Found Player");
+    //     }
+
+    //     foreach (GameObject player in players)
+    //     {
+    //         Vector3 dirToTarget = (player.transform.position - transform.position).normalized;
+    //         RaycastHit hit;
+    //         if (Physics.Raycast(transform.position, dirToTarget, out hit))
+    //         {
+    //             float dstToTarget = Vector3.Distance(transform.position, player.transform.position);
+    //             if (dstToTarget <= viewRadius)
+    //             {
+    //                 if (Vector3.Angle(transform.forward, dirToTarget) <= viewAngle / 2)
+    //                 {
+    //                     if (hit.collider.tag == "Player")
+    //                     {
+    //                         playerSeen = true;
+    //                         playerTarget = hit.transform;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    void FindPlayer()
+    {
         playerTarget = null;
         playerSeen = false;
 
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-
-        if (players.Length == 0)
+        if (player == null)
         {
             return;
         }
@@ -116,22 +155,19 @@ public class SimpleAI : MonoBehaviour
             Debug.Log("Found Player");
         }
 
-        foreach (GameObject player in players)
+        Vector3 dirToTarget = (player.transform.position - transform.position).normalized;
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, dirToTarget, out hit))
         {
-            Vector3 dirToTarget = (player.transform.position - transform.position).normalized;
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, dirToTarget, out hit))
+            float dstToTarget = Vector3.Distance(transform.position, player.transform.position);
+            if (dstToTarget <= viewRadius)
             {
-                float dstToTarget = Vector3.Distance(transform.position, player.transform.position);
-                if (dstToTarget <= viewRadius)
+                if (Vector3.Angle(transform.forward, dirToTarget) <= viewAngle / 2)
                 {
-                    if (Vector3.Angle(transform.forward, dirToTarget) <= viewAngle / 2)
+                    if (hit.collider.tag == "Player")
                     {
-                        if (hit.collider.tag == "Player")
-                        {
-                            playerSeen = true;
-                            playerTarget = hit.transform;
-                        }
+                        playerSeen = true;
+                        playerTarget = hit.transform;
                     }
                 }
             }
