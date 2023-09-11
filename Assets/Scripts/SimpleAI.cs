@@ -20,6 +20,7 @@ public class SimpleAI : MonoBehaviour
     public float patrolRadius;
 
 
+    private GameObject player;
     private Transform playerTarget;
 
     private Vector3 currentDestination;
@@ -32,6 +33,7 @@ public class SimpleAI : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
         currentDestination = RandomNavSphere(transform.position, patrolRadius, -1);
         maxNumberOfNewDestinationBeforeDeath = Random.Range(5, 50);
     }
@@ -144,7 +146,7 @@ public class SimpleAI : MonoBehaviour
         playerTarget = null;
         playerSeen = false;
 
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
 
         if (player == null)
         {
